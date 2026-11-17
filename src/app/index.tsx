@@ -1,24 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, Image } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, Image, TextInput } from 'react-native';
 
 export default function HomeScreen() {
   const [characters, setCharacters] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    fetch('https://rickandmortyapi.com/api/character')
+  // Funkcija za pridobivanje podatkov (lahko sprejme ime za iskanje)
+  const fetchCharacters = (name = '') => {
+    const url = name 
+      ? `https://rickandmortyapi.com/api/character/?name=${name}`
+      : 'https://rickandmortyapi.com/api/character';
+
+    fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        setCharacters(data.results);
+        if (data.results) {
+          setCharacters(data.results);
+        } else {
+          setCharacters([]);
+        }
         setLoading(false);
       })
       .catch((error) => {
         console.error(error);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchCharacters();
   }, []);
 
-  if (loading) {
+  // Funkcija, ko uporabnik nekaj vpiše v iskalno polje
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+    setLoading(true);
+    fetchCharacters(text);
+  };
+
+  if (loading && characters.length === 0) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color="#00ffcc" />
@@ -31,12 +52,20 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Rick and Morty Liki</Text>
       
+      {/* Iskalno polje */}
+      <TextInput
+        style={styles.input}
+        placeholder="Išči lika po imenu..."
+        placeholderTextColor="#888"
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
+
       <FlatList
         data={characters}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            {/* Dodana slika lika */}
             <Image source={{ uri: item.image }} style={styles.avatar} />
             <View style={styles.info}>
               <Text style={styles.name}>{item.name}</Text>
@@ -44,6 +73,7 @@ export default function HomeScreen() {
             </View>
           </View>
         )}
+        ListEmptyComponent={<Text style={styles.text}>Ni najdenih likov.</Text>}
       />
     </View>
   );
@@ -64,12 +94,19 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 15,
     textAlign: 'center',
+  },
+  input: {
+    backgroundColor: '#f1f1f1',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 15,
+    fontSize: 16,
   },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#f1f1f1',
+    backgroundColor: '#f9f9f9',
     borderRadius: 8,
     marginBottom: 10,
     overflow: 'hidden',
@@ -94,5 +131,6 @@ const styles = StyleSheet.create({
   text: {
     marginTop: 10,
     fontSize: 16,
+    textAlign: 'center',
   },
 });
