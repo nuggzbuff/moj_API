@@ -37,7 +37,6 @@ export default function HomeScreen() {
     fetchCharacters(text);
   };
 
-  // Funkcija za barvo glede na status lika
   const getStatusColor = (status) => {
     if (status === 'Alive') return '#55cc44';
     if (status === 'Dead') return '#ff5555';
@@ -89,23 +88,26 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#121212', // Posodobljeno temno ozadje
     paddingTop: 50,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
   },
   center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#121212',
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
+    color: '#ffffff',
     marginBottom: 15,
     textAlign: 'center',
   },
   input: {
-    backgroundColor: '#f1f1f1',
+    backgroundColor: '#1e1e1e',
+    color: '#ffffff',
     padding: 12,
     borderRadius: 8,
     marginBottom: 15,
@@ -113,25 +115,24 @@ const styles = StyleSheet.create({
   },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#1e1e1e', // Temne kartice
     borderRadius: 8,
     marginBottom: 10,
     overflow: 'hidden',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#eee',
   },
   avatar: {
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
   },
   info: {
-    padding: 10,
+    padding: 12,
     flex: 1,
   },
   name: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#ffffff',
   },
   statusRow: {
     flexDirection: 'row',
@@ -146,11 +147,12 @@ const styles = StyleSheet.create({
   },
   species: {
     fontSize: 14,
-    color: 'gray',
+    color: '#aaaaaa',
   },
   text: {
     marginTop: 10,
     fontSize: 16,
     textAlign: 'center',
+    color: '#ffffff',
   },
 });
