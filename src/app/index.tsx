@@ -6,7 +6,6 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Funkcija za pridobivanje podatkov (lahko sprejme ime za iskanje)
   const fetchCharacters = (name = '') => {
     const url = name 
       ? `https://rickandmortyapi.com/api/character/?name=${name}`
@@ -32,11 +31,17 @@ export default function HomeScreen() {
     fetchCharacters();
   }, []);
 
-  // Funkcija, ko uporabnik nekaj vpiše v iskalno polje
   const handleSearch = (text) => {
     setSearchQuery(text);
     setLoading(true);
     fetchCharacters(text);
+  };
+
+  // Funkcija za barvo glede na status lika
+  const getStatusColor = (status) => {
+    if (status === 'Alive') return '#55cc44';
+    if (status === 'Dead') return '#ff5555';
+    return '#9e9e9e';
   };
 
   if (loading && characters.length === 0) {
@@ -52,7 +57,6 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Rick and Morty Liki</Text>
       
-      {/* Iskalno polje */}
       <TextInput
         style={styles.input}
         placeholder="Išči lika po imenu..."
@@ -69,7 +73,10 @@ export default function HomeScreen() {
             <Image source={{ uri: item.image }} style={styles.avatar} />
             <View style={styles.info}>
               <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.species}>{item.species} - {item.status}</Text>
+              <View style={styles.statusRow}>
+                <View style={[styles.dot, { backgroundColor: getStatusColor(item.status) }]} />
+                <Text style={styles.species}>{item.status} - {item.species}</Text>
+              </View>
             </View>
           </View>
         )}
@@ -111,6 +118,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     overflow: 'hidden',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#eee',
   },
   avatar: {
     width: 60,
@@ -123,6 +132,17 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
   },
   species: {
     fontSize: 14,
