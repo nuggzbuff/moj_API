@@ -1,13 +1,37 @@
-import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 export default function DetailScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams();
-  
-  // Pretvorimo prenesene podatke nazaj v objekt
-  const character = params.character ? JSON.parse(params.character) : null;
+  const { id } = useLocalSearchParams();
+  const [character, setCharacter] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Prenos podatkov posebej za ta ID
+  useEffect(() => {
+    if (id) {
+      fetch(`https://rickandmortyapi.com/api/character/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setCharacter(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoading(false);
+        });
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#00ffcc" />
+        <Text style={styles.text}>Nalagam podrobnosti...</Text>
+      </View>
+    );
+  }
 
   if (!character) {
     return (
@@ -22,7 +46,6 @@ export default function DetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Velika slika lika */}
       <Image source={{ uri: character.image }} style={styles.image} />
       
       <Text style={styles.name}>{character.name}</Text>
