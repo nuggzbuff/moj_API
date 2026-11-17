@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, Image, TextInput } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, Image, TextInput, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function HomeScreen() {
   const [characters, setCharacters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
 
   const fetchCharacters = (name = '') => {
     const url = name 
@@ -68,7 +70,10 @@ export default function HomeScreen() {
         data={characters}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <TouchableOpacity 
+            style={styles.card}
+            onPress={() => router.push({ pathname: '/detail', params: { character: JSON.stringify(item) } })}
+          >
             <Image source={{ uri: item.image }} style={styles.avatar} />
             <View style={styles.info}>
               <Text style={styles.name}>{item.name}</Text>
@@ -77,7 +82,7 @@ export default function HomeScreen() {
                 <Text style={styles.species}>{item.status} - {item.species}</Text>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
         )}
         ListEmptyComponent={<Text style={styles.text}>Ni najdenih likov.</Text>}
       />
@@ -88,7 +93,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212', // Posodobljeno temno ozadje
+    backgroundColor: '#121212',
     paddingTop: 50,
     paddingHorizontal: 15,
   },
@@ -115,7 +120,7 @@ const styles = StyleSheet.create({
   },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#1e1e1e', // Temne kartice
+    backgroundColor: '#1e1e1e',
     borderRadius: 8,
     marginBottom: 10,
     overflow: 'hidden',
